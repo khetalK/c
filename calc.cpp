@@ -1,7 +1,6 @@
 #include <cmath>
 #include <iostream>
 
-
 using namespace std;
 
 double calcAddition(double a, double b) { return a + b; }
@@ -52,20 +51,22 @@ void calculatorFn() {
   cout << outputVal << endl;
 
   // continue Or not
-  char continueChooser;
+  {
+    char continueChooser;
 
-  cout << "Continue? (\n\ty -> yes \n\tn -> n\n): " << endl;
-  cin >> continueChooser;
+    cout << "Continue? (\n\ty -> yes \n\tn -> n\n): " << endl;
+    cin >> continueChooser;
 
-  if (continueChooser == 'y' || continueChooser == 'n') {
-    switch (continueChooser) {
-    case 'y':
-      calculatorFn();
-      break;
+    if (continueChooser == 'y' || continueChooser == 'n') {
+      switch (continueChooser) {
+      case 'y':
+        calculatorFn();
+        break;
 
-    default:
-      cout << "Bye!" << endl;
-      break;
+      default:
+        cout << "Bye!" << endl;
+        break;
+      }
     }
   }
 }
