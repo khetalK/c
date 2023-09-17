@@ -10,7 +10,9 @@
         "stdio.h": "c",
         "stdlib.h": "c",
         "iostream": "cpp",
-        "ostream": "cpp"
+        "ostream": "cpp",
+        "array": "cpp",
+        "cmath": "cpp"
     },
     "C_Cpp.errorSquiggles": "enabled"
 }
