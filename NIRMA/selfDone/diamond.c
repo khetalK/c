@@ -91,6 +91,6 @@ int main() {
   }
 
   betterMethod();
-
+  system("pause");
   return 0;
 }

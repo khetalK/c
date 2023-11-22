@@ -1,0 +1,17 @@
+{
+    "files.associations": {
+        "*.css": "css",
+        "*.html": "html",
+        "*.js": "javascript",
+        "*.module.css": "css",
+        "*.module.scss": "scss",
+        "*.py": "python",
+        "*.scss": "scss",
+        "stdlib.h": "c",
+        "array": "c",
+        "string.h": "c",
+        "stdio.h": "c",
+        "string": "c",
+        "cstdio": "c"
+    }
+}

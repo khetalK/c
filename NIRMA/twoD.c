@@ -1,3 +1,4 @@
+
 #include <stdio.h>
 
 int main() {
@@ -13,7 +14,7 @@ int main() {
   : (y > x)
       ? printf("The Second Number(%d) is greater than the First Number(%d)", y,
                x)
-      : printf("The First Number(%d) is equal to the Second Number(%d), x,y");
+      : printf("The First Number(%d) is equal to the Second Number(%d)", x, y);
 
   return 0;
 }

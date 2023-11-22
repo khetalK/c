@@ -14,9 +14,9 @@ double calcModulus(int a, int b) { return a % b; }
 double calculate(double a, double b, char c) {
   double outputValue;
   if (c == '+') {
-    outputValue = calcAddition(a, b);
+    outputValue = a + b;
   } else if (c == '-') {
-    outputValue = calcSubtraction(a, b);
+    outputValue = a - b;
   } else if (c == '*') {
     outputValue = calcMultiplication(a, b);
   } else if (c == '/') {
@@ -26,12 +26,10 @@ double calculate(double a, double b, char c) {
   } else {
     printf("\nInvalid Operator!\n");
   }
-
   return outputValue;
 }
 
-void calculatorFn() {
-
+int main() {
   double firstNum, secondNum, outputVal;
   char oper;
 
@@ -50,27 +48,5 @@ void calculatorFn() {
 
   printf("%.2f\n", outputVal);
 
-  // continue Or not
-  char continueChooser;
-
-  printf("Continue? (\n\ty -> yes \n\tn -> n\n): ");
-
-  scanf("%1s", &continueChooser);
-
-  if (continueChooser == 'y' || continueChooser == 'n') {
-    switch (continueChooser) {
-    case 'y':
-      calculatorFn();
-      break;
-
-    default:
-      printf("Bye!");
-      break;
-    }
-  }
-}
-
-int main() {
-  calculatorFn();
   return 0;
 }

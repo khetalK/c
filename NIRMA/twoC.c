@@ -2,8 +2,7 @@
 
 #include <stdio.h>
 
-void thirdVar(int a, int b)
-{
+void thirdVar(int a, int b) {
     int c = 0;
     c = a;
     a = b;
@@ -13,22 +12,17 @@ void thirdVar(int a, int b)
     printf("\tb: %d\n", b);
 }
 
-void noThirdVar(int a, int b)
-{
+void noThirdVar(int a, int b) {
     a = a + b;
     b = a - b;
     a = a - b;
 
-    // b = b - a;
-    // a = a + b;
-    // b = a - b;
     printf("Not Using Third Variable: \n");
     printf("\ta: %d\n", a);
     printf("\tb: %d\n", b);
 }
 
-int main()
-{
+int main() {
 
     int a;
     printf("Enter First Value: ");

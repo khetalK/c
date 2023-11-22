@@ -13,18 +13,19 @@ int checkDiscriminator(int discriminator) {
 }
 
 int main() {
-  double a, b, c;
+  double coefficient__xSquare, coefficient__x, coefficient__const;
 
   printf("Enter the coefficient of x^2 (a): ");
-  scanf("%lf", &a);
+  scanf("%lf", &coefficient__xSquare);
 
   printf("Enter the coefficient of x (b): ");
-  scanf("%lf", &b);
+  scanf("%lf", &coefficient__x);
 
   printf("Enter the constant (c): ");
-  scanf("%lf", &c);
+  scanf("%lf", &coefficient__const);
 
-  double discriminator = b * b - 4 * a * c;
+  double discriminator = coefficient__x * coefficient__x -
+                         4 * coefficient__xSquare * coefficient__const;
 
   int numberOfRoots = checkDiscriminator(discriminator);
 
@@ -32,13 +33,13 @@ int main() {
 
   if (numberOfRoots == 2) {
     printf("The given Quadratic Equation has 2 roots\n");
-    x1 = (-b + sqrt(discriminator)) / 2 * a;
-    x2 = (-b - sqrt(discriminator)) / 2 * a;
-    printf("The Roots of given Quadratic Equation are %lf & %lf", x1, x2);
+    x1 = (-coefficient__x + sqrt(discriminator)) / 2 * coefficient__xSquare;
+    x2 = (-coefficient__x - sqrt(discriminator)) / 2 * coefficient__xSquare;
+    printf("The Roots of given Quadratic Equation are %.2lf & %.2lf", x1, x2);
   } else if (numberOfRoots == 1) {
     printf("The given Quadratic Equation has 1 root\n");
-    x1 = x2 = (-b) / 2 * a;
-    printf("The Root of given Quadratic Equation is %lf", x1);
+    x1 = x2 = (-coefficient__x) / 2 * coefficient__xSquare;
+    printf("The Root of given Quadratic Equation is %.2lf", x1);
   } else {
     printf("The given Quadratic Equation has NO roots");
   }

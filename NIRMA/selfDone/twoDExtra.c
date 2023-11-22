@@ -71,5 +71,6 @@ int main() {
 
   numComparisionWTernary(x, y, z);
 
+  system("pause");
   return 0;
 }

@@ -8,11 +8,12 @@
         "*.py": "python",
         "*.scss": "scss",
         "stdio.h": "c",
-        "stdlib.h": "c",
         "iostream": "cpp",
+        "cmath": "cpp",
+        "iterator": "c",
+        "xmemory": "c",
+        "xutility": "c",
         "ostream": "cpp",
-        "array": "cpp",
-        "cmath": "cpp"
-    },
-    "C_Cpp.errorSquiggles": "enabled"
+        "xstring": "cpp"
+    }
 }
