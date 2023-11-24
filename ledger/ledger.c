@@ -29,7 +29,12 @@ char *typeEnumToString(int typeEnum) {
 /// @brief total number of elements/records
 int i = 0;
 
+///@brief final index of entries
+int finalIndex = 0;
+
 void entriesToArray(ledgerEntry *entries);
+void arrayToEntries(ledgerEntry *entries);
+
 // operations
 void printEntries(ledgerEntry *entries, int entries__length);
 void addEntries(ledgerEntry *entries);
@@ -64,7 +69,6 @@ int main() {
 
     printf("Hello!\n");
     while (loop) {
-
         printf("(1-> Print present entries,\n"
                "2-> Add entry,\n"
                "3-> Filter entries,\n"
@@ -82,16 +86,22 @@ int main() {
         }
         case 2: {
             addEntries(entries);
+            printEntries(entries, i);
             printf("\n");
             break;
         }
         case 3: {
             ledgerEntry outputEntries[ENTRIES_LENGTH];
+
             int filtered__len = filterEntries(entries, outputEntries, i);
+
             printEntries(outputEntries, filtered__len);
+
             if (filterFurther())
                 filterEntries(entries, outputEntries, i);
+
             printEntries(outputEntries, filtered__len);
+
             printf("\n");
             break;
         }
@@ -108,20 +118,21 @@ int main() {
             break;
         }
         case 6: {
-            FILE *fileptr = fopen(DATA_FILE, "w");
+            FILE *fileptr = fopen(DATA_FILE, "wb");
             fclose(fileptr);
             printf("\nThe file has been emptied!\n");
             break;
         }
-        case 7:
+        case 7: {
             loop = 0;
             return 0;
+        }
         }
     }
 }
 
 void entriesToArray(ledgerEntry *entries) {
-    FILE *fileptr = fopen(DATA_FILE, "r");
+    FILE *fileptr = fopen(DATA_FILE, "rb");
 
     i = 0;
 
@@ -132,11 +143,14 @@ void entriesToArray(ledgerEntry *entries) {
     while (fread(&entries[i], sizeof(entries[0]), 1, fileptr)) {
         i++;
     }
+
+    finalIndex = entries[i - 1].index;
+
     fclose(fileptr);
 }
 
 void arrayToEntries(ledgerEntry *entries) {
-    FILE *fileptr = fopen(DATA_FILE, "w");
+    FILE *fileptr = fopen(DATA_FILE, "wb");
     int j = 0;
 
     while (j < i) {
@@ -151,11 +165,11 @@ void printEntries(ledgerEntry *entries, int entries__length) {
     printf("\n");
     printf("there are %d records\n\n", entries__length);
 
-    printf("%5s\t%10s\t%10s\t%10s\t%10s\n", "Index", "Date", "Type", "Category",
-           "Amount");
+    printf("%-5s\t%-10s\t%-10s\t%-10s\t%-10s\n", "Index", "Date", "Type",
+           "Category", "Amount");
     for (int j = 0; j < entries__length; j++) {
-        printf("%5d\t%d-%d-%d  \t%10s\t%10s\t%10d\n", j + 1, entries[j].date[0],
-               entries[j].date[1], entries[j].date[2],
+        printf("%-5d\t%d-%d-%d  \t%-10s\t%-10s\t%-10d\n", j + 1,
+               entries[j].date[0], entries[j].date[1], entries[j].date[2],
                typeEnumToString(entries[j].type), entries[j].category,
                entries[j].amount);
     }
@@ -168,7 +182,7 @@ void addEntries(ledgerEntry *entries) {
     }
 
     ledgerEntry newEntry;
-    newEntry.index = i + 1;
+    newEntry.index = ++finalIndex;
 
     int input__loop = 0;
 
@@ -191,6 +205,7 @@ void addEntries(ledgerEntry *entries) {
             }
         }
 
+        ///@brief validating date
         if (newEntry.date[1] < 12) {
 
             input__loop = 0;
@@ -229,13 +244,15 @@ void addEntries(ledgerEntry *entries) {
         }
 
         printf("Enter the Transaction Type (1->Income, 2->Expense): ");
-        scanf("%u", &newEntry.type);
+        scanf("%d", &newEntry.type);
 
         input__loop = 0;
 
         if (newEntry.type != 1 && newEntry.type != 2) {
             input__loop = 1;
         }
+
+        newEntry.type--;
 
     } while (input__loop);
 
@@ -252,7 +269,7 @@ void addEntries(ledgerEntry *entries) {
         }
 
         printf("Enter the Transaction Amount: ");
-        scanf("%u", &newEntry.amount);
+        scanf("%d", &newEntry.amount);
 
         input__loop = 0;
 
@@ -262,13 +279,10 @@ void addEntries(ledgerEntry *entries) {
 
     } while (input__loop);
 
-    newEntry.type--;
-
     fwrite(&newEntry, sizeof(newEntry), 1, fileptr);
     fclose(fileptr);
 
     entriesToArray(entries);
-    printEntries(entries, i);
 }
 
 int filterEntries(ledgerEntry *entries, ledgerEntry *outputEntries, int len) {
@@ -317,7 +331,7 @@ int filterEntries(ledgerEntry *entries, ledgerEntry *outputEntries, int len) {
 
                 for (int j = 0; j < len; j++) {
                     if (strstr(entries[j].category, filter__category) == NULL) {
-                        break;
+                        continue;
                     }
                     outputEntries[k] = entries[j];
                     outputEntries[k].index__filter = k + 1;
@@ -329,7 +343,6 @@ int filterEntries(ledgerEntry *entries, ledgerEntry *outputEntries, int len) {
                     printf("No Entries!");
                     break;
                 }
-                printEntries(outputEntries, o);
                 filter__loop = 0;
                 break;
             }
@@ -372,7 +385,7 @@ int filterFurther() {
 void editEntries(ledgerEntry *entries) {
     ///@brief copy of i (total records/entries)
     int j = i;
-    int edit__index = 0, j2 = j;
+    int edit__index = 0;
 
     printEntries(entries, i);
 
@@ -391,11 +404,9 @@ void editEntries(ledgerEntry *entries) {
             j = filterEntries(entries, outputEntries, i);
         } else {
             ///@brief indexing entries
-            while (j) {
-                outputEntries[j2 - j].index__filter = j2 - j + 1;
-                j--;
+            while (j--) {
+                outputEntries[j].index__filter = j + 1;
             }
-            j = i;
         };
     }
 
@@ -403,15 +414,14 @@ void editEntries(ledgerEntry *entries) {
 
     ///@brief getting filtered index of entry to be edited
     {
-        printf("\nEnter the index of the entry to delete (first column): ");
+        printf("\nEnter the index of the entry to edit (first column): ");
         scanf("%d", &edit__index);
 
-        while (j--) {
-            if (outputEntries[j].index__filter == edit__index) {
-                outputEntries[0] = outputEntries[j];
+        for (j = 1; j <= i; j++) {
+            if (outputEntries[j - 1].index__filter == edit__index) {
+                outputEntries[0] = outputEntries[j - 1];
             }
         }
-        j = i;
     }
 
     /// @brief editing the entry
@@ -419,15 +429,76 @@ void editEntries(ledgerEntry *entries) {
         int editChoice = 0, edit__loop = 0;
         do {
             printf("Enter the field you want to edit\n"
-                   "(1-> Transation Type, \n"
-                   "2-> Category, \n"
-                   "3-> Amount): ");
+                   "(1->Transaction Date, \n"
+                   "2-> Transation Type, \n"
+                   "3-> Category, \n"
+                   "4-> Amount): ");
             scanf("%d", &editChoice);
-
-            FILE *fileptr = fopen(DATA_FILE, "r+");
 
             switch (editChoice) {
             case 1: {
+                int newDate[3], loop__edit = 0;
+                printf("Changing the Transaction Date...\n");
+                printf("The present transaction type is %d-%d-%d.\n",
+                       outputEntries[0].date[0], outputEntries[0].date[1],
+                       outputEntries[0].date[2]);
+
+                do {
+                    if (loop__edit == 1) {
+                        printf("Enter A valid date!\n");
+                    }
+
+                    int thirtyOneDayMonths[7] = {1, 3, 5, 7, 8, 10, 12},
+                        thirtyOneDayMonth = 0;
+
+                    printf("Enter the new Transaction Date (DD-MM-YYYY): ");
+                    scanf("%d-%d-%d", &newDate[0], &newDate[1], &newDate[2]);
+
+                    for (int j = 0; j < 7; j++) {
+                        if (newDate[1] == thirtyOneDayMonths[j]) {
+                            thirtyOneDayMonth = 1;
+                        }
+                    }
+
+                    ///@brief validating date
+                    if (newDate[1] < 12) {
+
+                        loop__edit = 0;
+
+                        if (thirtyOneDayMonth == 1) {
+                            if (newDate[0] > 31) {
+                                loop__edit = 1;
+                            }
+
+                        } else {
+                            if (newDate[1] == 2) {
+                                if (newDate[0] > 28 && newDate[2] % 4 != 0) {
+                                    loop__edit = 1;
+                                } else if (newDate[0] > 29 &&
+                                           newDate[2] % 4 == 0) {
+                                    loop__edit = 1;
+                                }
+
+                            } else {
+                                if (newDate[0] > 30) {
+                                    loop__edit = 1;
+                                }
+                            }
+                        }
+                    } else {
+                        loop__edit = 1;
+                    }
+                } while (loop__edit);
+
+                {
+                    outputEntries[0].date[0] = newDate[0];
+                    outputEntries[0].date[1] = newDate[1];
+                    outputEntries[0].date[2] = newDate[2];
+                }
+
+                break;
+            }
+            case 2: {
                 int newType = 0, loop__edit = 0;
                 printf("Changing the Transaction Type...\n");
                 printf("The present transaction type is %s.\n",
@@ -439,22 +510,21 @@ void editEntries(ledgerEntry *entries) {
                     }
 
                     printf("Enter the new value(1->Income, 2->Expense): ");
-                    scanf("%u", &newType);
+                    scanf("%d", &newType);
 
-                    if (newType != 1 && newType != 2) {
+                    if (!(newType == 1 || newType == 2)) {
                         loop__edit = 1;
                     }
+
+                    newType--;
+
                 } while (loop__edit);
+                printf("ayo %d", newType);
                 outputEntries[0].type = newType;
 
-                while (j--) {
-                    if (entries[j].index == outputEntries[0].index) {
-                        entries[j].type = outputEntries[0].type;
-                    }
-                }
                 break;
             }
-            case 2: {
+            case 3: {
                 char newCategory[51];
 
                 printf("Changing the Category...\n");
@@ -465,27 +535,17 @@ void editEntries(ledgerEntry *entries) {
                 scanf("%s", newCategory);
                 strcpy(outputEntries[0].category, newCategory);
 
-                while (j--) {
-                    if (entries[j].index == outputEntries[0].index) {
-                        strcpy(entries[j].category, newCategory);
-                    }
-                }
                 break;
             }
-            case 3: {
+            case 4: {
                 int newAmount = 0;
                 printf("Changing the Transaction Amount...\n");
                 printf("The old value is %d.\n", outputEntries[0].amount);
 
                 printf("Enter the new value(1->Income, 2->Expense): ");
-                scanf("%u", &newAmount);
+                scanf("%d", &newAmount);
                 outputEntries[0].amount = newAmount;
 
-                while (j--) {
-                    if (entries[j].index == outputEntries[0].index) {
-                        entries[j].amount = outputEntries[0].amount;
-                    }
-                }
                 break;
             }
             default: {
@@ -493,8 +553,12 @@ void editEntries(ledgerEntry *entries) {
                 break;
             }
             }
+            while (j--) {
+                if (entries[j].index == outputEntries[0].index) {
+                    entries[j] = outputEntries[0];
+                }
+            }
             j = i;
-            fclose(fileptr);
         } while (edit__loop);
     }
 
@@ -504,7 +568,7 @@ void editEntries(ledgerEntry *entries) {
 void deleteEntry(ledgerEntry *entries) {
     ///@brief copy of i (total records/entries)
     int j = i;
-    int delete__index = 0, j2 = j;
+    int delete__index = 0;
 
     printEntries(entries, i);
 
@@ -523,42 +587,47 @@ void deleteEntry(ledgerEntry *entries) {
             j = filterEntries(entries, outputEntries, i);
         } else {
             ///@brief indexing entries
-            while (j) {
-                outputEntries[j2 - j].index__filter = j2 - j + 1;
-                j--;
+            while (j--) {
+                outputEntries[j].index__filter = j + 1;
             }
-            j = i;
         };
     }
 
     printEntries(outputEntries, i);
 
-    ///@brief getting filtered index of entry to be edited
+    ///@brief getting filtered index of entry to be deleted
     {
         printf("\nEnter the index of the entry to delete (first column): ");
         scanf("%d", &delete__index);
 
-        while (j--) {
-            if (outputEntries[j].index__filter == delete__index) {
-                outputEntries[0] = outputEntries[j];
+        for (j = 1; j <= i; j++) {
+            if (outputEntries[j - 1].index__filter == delete__index) {
+                outputEntries[0] = outputEntries[j - 1];
             }
         }
-        j = i;
     }
+
+    printEntries(outputEntries, j);
 
     /// @brief deleting the entry
     {
         i--;
-        j = 0;
+        j = i;
 
-        while (j < i) {
+        ledgerEntry shiftEntryL, shiftEntryS;
+        shiftEntryL = entries[j];
+
+        while (j--) {
             if (entries[j].index < (outputEntries[0].index)) {
                 break;
             }
-            entries[j] = entries[j + 1];
-            j++;
+            shiftEntryS = entries[j];
+            entries[j] = shiftEntryL;
+            shiftEntryL = shiftEntryS;
         }
     }
+
+    printf("Deleted the entry!");
 
     arrayToEntries(entries);
 }
